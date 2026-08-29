@@ -25,6 +25,9 @@ jobs:
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
           COINS: "BTC,ETH,SOL,BNB,XRP,DOGE"
+          TIER: "pro"
+          OPENBLAS_NUM_THREADS: "1"
+          OMP_NUM_THREADS: "1"
         run: python main.py
       - name: Commit forecast log (track record)
         run: |

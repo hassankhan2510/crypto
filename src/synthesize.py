@@ -1,68 +1,121 @@
-"""Combine everything into a per-coin report + honest plain-English risk verdict.
-NO buy/sell signals -- risk regime, context, and what to watch."""
+"""Combine everything into a per-coin report that speaks BOTH languages:
+  🟢 IN PLAIN WORDS  — a normal person understands what's happening & what it means
+  📊 FOR THE TRADER  — the metrics a 10-yr trader wants (levels, CVD, VPIN, liq, funding)
+Plus an honest risk VERDICT. Never buy/sell direction.
+Also builds a PORTFOLIO summary for non-trading allocators."""
 from config import FUNDING_EXTREME, OI_BUILD_PCT
 
-def build_report(coin, spot24, vol, of, wr, deriv, xprice):
+# ---------------------------------------------------------------- per coin
+def build_report(coin, spot24, vol, of, agg, vp, wr, deriv, xprice, mvol, levels, vpin_v):
     price = spot24["price"]
-
-    # ---- cross-exchange agreement ----
     prices = [p for p in [price, xprice.get("coinbase"), xprice.get("okx")] if p]
     spread_bp = (max(prices) - min(prices)) / price * 1e4 if len(prices) > 1 else 0.0
+    fr, oi, ls = deriv.get("funding"), deriv.get("oi_chg"), deriv.get("long_short")
 
-    # ---- derivatives flags ----
-    fr = deriv.get("funding"); oi = deriv.get("oi_chg"); ls = deriv.get("long_short")
     fund_flag = ""
     if fr is not None:
-        fund_flag = "🔴 crowded longs (pay to hold)" if fr > FUNDING_EXTREME else \
-                    "🟢 crowded shorts (paid to hold)" if fr < -FUNDING_EXTREME else "neutral"
-    oi_flag = ""
-    if oi is not None:
-        oi_flag = "building" if oi > OI_BUILD_PCT else "unwinding" if oi < -OI_BUILD_PCT else "flat"
+        fund_flag = "crowded longs" if fr > FUNDING_EXTREME else \
+                    "crowded shorts" if fr < -FUNDING_EXTREME else "neutral"
+    oi_flag = "" if oi is None else ("building" if oi > OI_BUILD_PCT else "unwinding" if oi < -OI_BUILD_PCT else "flat")
 
-    # ---- honest verdict ----
-    reg = vol["regime"] if vol else "?"
-    exp = vol["expansion"] if vol else "?"
-    lines = []
-    stand_aside = False
+    # ---------- PLAIN WORDS (beginner) ----------
+    plain = _plain(coin, spot24, vol, agg, wr, fr, oi)
 
-    if vol:
-        if reg == "STORM":
-            lines.append(f"⚡ **High-risk regime.** Expect ~±{vol['move_pct']:.1f}% over 24h. Size DOWN; wide stops or stay out.")
-        elif reg == "CALM" and exp == "CONTRACTING":
-            lines.append(f"😴 **Dead/compressed.** Expected move only ~±{vol['move_pct']:.1f}%. Costs eat you here — **stand aside** or wait for expansion.")
-            stand_aside = True
-        else:
-            lines.append(f"🟡 **Normal regime.** Expected ~±{vol['move_pct']:.1f}% over 24h.")
-        if exp == "EXPANDING":
-            lines.append("🌪️ **Volatility is expanding — a move is opening (direction unknown).** This is the window that matters.")
-
-    # positioning squeeze risk (both-directional, honest)
-    if fr is not None and oi is not None and abs(fr) > FUNDING_EXTREME and oi > OI_BUILD_PCT:
-        side = "longs" if fr > 0 else "shorts"
-        lines.append(f"🎯 Crowded {side} + rising OI → **squeeze risk** (violent move if it unwinds).")
-
-    # flow context (never a signal)
-    if of:
-        lines.append(f"Flow: aggressors net **{of['cvd_24h']}** (24h), **{of['cvd_4h']}** (4h). "
-                     f"Whales **{wr['whale']}**, retail **{wr['retail']}**.")
-
-    verdict = "\n".join(lines) if lines else "No strong read."
+    # ---------- VERDICT (risk, honest) ----------
+    verdict, stand_aside = _verdict(vol, of, wr, fr, oi)
 
     return {
         "coin": coin, "price": price, "chg_pct": spot24["chg_pct"],
-        "vol": vol, "of": of, "wr": wr,
+        "vol": vol, "of": of, "agg": agg, "vp": vp, "wr": wr, "vpin": vpin_v,
         "funding": fr, "fund_flag": fund_flag, "oi_chg": oi, "oi_flag": oi_flag,
         "long_short": ls, "xspread_bp": spread_bp, "n_exch": len(prices),
-        "verdict": verdict, "stand_aside": stand_aside,
+        "mvol": mvol, "levels": levels,
+        "plain": plain, "verdict": verdict, "stand_aside": stand_aside,
     }
 
+def _plain(coin, spot24, vol, agg, wr, fr, oi):
+    chg = spot24["chg_pct"]
+    move = f"{coin} is {'up' if chg>=0 else 'down'} {abs(chg):.1f}% today."
+    if not vol:
+        return move
+    reg = vol["regime"]
+    if reg == "STORM":
+        calm = "It's a **wild/high-risk** day — big swings likely."
+    elif reg == "CALM":
+        calm = "It's **quiet** right now — small moves, not much happening."
+    else:
+        calm = "It's a **normal** day for movement."
+    swing = f"Expect roughly a **±{vol['move_pct']:.1f}%** swing over the next 24h."
+    # who's in control, in plain terms
+    who = ""
+    if agg and agg["venues"]:
+        a = agg["agg_pct"]
+        who = ("Buyers are pushing harder than sellers right now." if a > 3
+               else "Sellers are pushing harder than buyers right now." if a < -3
+               else "Buyers and sellers are fairly balanced.")
+    big = ""
+    if wr and wr["whale"] in ("buying", "selling"):
+        big = f" Big players are net **{wr['whale']}**."
+    # what it means for a normal holder
+    if reg == "STORM":
+        mean = "👉 If you just hold, expect a bumpy ride; don't panic on a spike, and avoid big new bets into the chaos."
+    elif reg == "CALM" and vol["expansion"] == "CONTRACTING":
+        mean = "👉 Not much to do here — calm before a possible move. Patience beats forcing a trade."
+    else:
+        mean = "👉 Normal conditions. Nothing urgent for a long-term holder."
+    return f"{move} {calm} {swing} {who}{big}\n{mean}"
+
+def _verdict(vol, of, wr, fr, oi):
+    lines, stand_aside = [], False
+    if vol:
+        reg, exp = vol["regime"], vol["expansion"]
+        if reg == "STORM":
+            lines.append(f"⚡ High-risk regime (~±{vol['move_pct']:.1f}%/24h). Size DOWN, wider stops, or stay out.")
+        elif reg == "CALM" and exp == "CONTRACTING":
+            lines.append(f"😴 Compressed/dead (~±{vol['move_pct']:.1f}%). Costs eat you — stand aside / await expansion.")
+            stand_aside = True
+        else:
+            lines.append(f"🟡 Normal regime (~±{vol['move_pct']:.1f}%/24h).")
+        if exp == "EXPANDING":
+            lines.append("🌪️ Volatility EXPANDING — a move is opening (direction unknown). The window that matters.")
+    if fr is not None and oi is not None and abs(fr) > FUNDING_EXTREME and oi > OI_BUILD_PCT:
+        side = "longs" if fr > 0 else "shorts"
+        lines.append(f"🎯 Crowded {side} + rising OI → squeeze risk (violent unwind possible).")
+    return ("\n".join(lines) if lines else "No strong read."), stand_aside
+
+# ---------------------------------------------------------------- portfolio (allocator)
+def portfolio_summary(reports):
+    vols = [r for r in reports if r["vol"]]
+    if not vols: return None
+    storms = sum(1 for r in vols if r["vol"]["regime"] == "STORM")
+    calms = sum(1 for r in vols if r["vol"]["regime"] == "CALM")
+    expanding = sum(1 for r in vols if r["vol"]["expansion"] == "EXPANDING")
+    n = len(vols)
+    if storms >= n / 2:
+        risk = "RISK-OFF"; note = "Most coins are in a high-vol storm. For a portfolio: reduce size / raise cash, expect big swings both ways."
+    elif calms >= n / 2 and expanding == 0:
+        risk = "QUIET"; note = "Market is calm and compressed. Low opportunity now; a move usually follows quiet — be ready, don't force."
+    else:
+        risk = "MIXED"; note = "Normal-to-elevated risk. Be selective; favour the coins that are expanding, keep risk controlled."
+    avg_move = sum(r["vol"]["move_pct"] for r in vols) / n
+    return {"risk": risk, "note": note, "storms": storms, "n": n,
+            "expanding": expanding, "avg_move": avg_move}
+
+# ---------------------------------------------------------------- console
 def console(rep):
-    v = rep["vol"]; lines = []
-    lines.append(f"\n=== {rep['coin']}  ${rep['price']:,.2f}  ({rep['chg_pct']:+.2f}% 24h)  [{rep['n_exch']} exch, spread {rep['xspread_bp']:.1f}bp] ===")
+    v = rep["vol"]; L = rep.get("levels") or {}; vp = rep.get("vp") or {}
+    out = [f"\n=== {rep['coin']}  ${rep['price']:,.2f}  ({rep['chg_pct']:+.2f}% 24h)  [{rep['n_exch']} exch, spread {rep['xspread_bp']:.1f}bp] ==="]
+    out.append("  PLAIN: " + rep["plain"].replace("**", "").replace("\n", "\n         "))
     if v:
-        lines.append(f"  VOL: next-24h ±{v['move_pct']:.1f}% (range {v['range_lo']:,.0f}-{v['range_hi']:,.0f}) | "
-                     f"regime {v['regime']} ({v['regime_pctile']:.0f}%ile) | {v['expansion']} | conf {v['confidence']}")
-    if rep['funding'] is not None:
-        lines.append(f"  DERIV: funding {rep['funding']*100:+.3f}% {rep['fund_flag']} | OI 24h {rep['oi_chg'] if rep['oi_chg'] is None else f'{rep['oi_chg']:+.1f}%'} {rep['oi_flag']} | L/S {rep['long_short']}")
-    lines.append("  VERDICT: " + rep["verdict"].replace("\n", "\n           ").replace("**",""))
-    return "\n".join(lines)
+        out.append(f"  VOL: ±{v['move_pct']:.1f}%/24h (range {v['range_lo']:,.0f}-{v['range_hi']:,.0f}) | {v['regime']} {v['regime_pctile']:.0f}%ile | {v['expansion']} | conf {v['confidence']}")
+    ag = rep.get("agg") or {}
+    vpin_s = f"{rep['vpin']:.2f}" if rep.get("vpin") is not None else "n/a"
+    div_s = ", DIVERGENT" if ag.get("divergence") else ""
+    out.append(f"  FLOW: xexch CVD {ag.get('agg_pct',0):+.1f}% ({ag.get('venues',0)} venues{div_s}) | VPIN {vpin_s} | whales {rep['wr']['whale']}")
+    if rep["funding"] is not None:
+        oi = 'n/a' if rep['oi_chg'] is None else f"{rep['oi_chg']:+.1f}%"
+        out.append(f"  DERIV: funding {rep['funding']*100:+.3f}% ({rep['fund_flag']}) | OI {oi} {rep['oi_flag']} | L/S {rep['long_short']}")
+    if vp.get("poc"):
+        out.append(f"  LEVELS: POC {vp['poc']:,.0f} | sup {vp.get('support')} | res {vp.get('resistance')} | liq↓ {L.get('long_liq',[None])[0]} liq↑ {L.get('short_liq',[None])[0]}")
+    out.append("  VERDICT: " + rep["verdict"].replace("\n", "\n           "))
+    return "\n".join(out)

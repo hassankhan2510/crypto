@@ -146,12 +146,20 @@ Everything a new person needs is in this file + README.md. Point them here first
 
 ---
 
-## 9. Roadmap
+## 9. Roadmap — ALL PHASES BUILT ✅
 
-- **Phase 1 (now):** pipeline + Discord + forecast log. ✅
-- **Phase 2:** score the vol forecasts vs realized (public accuracy scorecard = the trust moat);
-  add liquidation-cluster levels; add more exchanges' taker flow for true cross-exchange CVD.
-- **Phase 3:** tiers (free 1 coin → $49–99 retail → $499–1k allocator/managed).
+- **Phase 1:** pipeline + Discord + forecast log. ✅
+- **Phase 2:** ✅ track-record **scorer** (`src/scorer.py`, range-coverage vs realized);
+  **liquidation-cluster** levels + **volume-profile** POC/S-R (`src/levels.py`);
+  **cross-exchange aggregated CVD** (Binance+Coinbase+OKX) + **VPIN** toxicity (`src/orderflow.py`).
+- **Phase 3:** ✅ **dual-audience reports** (🟢 plain words for anyone + 📊 pro block for traders),
+  **portfolio/market overview** for non-trading allocators (`portfolio_summary`), and report **TIERS**
+  via `TIER` env (`free` = 1-liner, `retail` = plain+key metrics, `pro` = everything).
+
+**Local-run note:** on some Windows/Python builds numpy throws an OpenBLAS memory error —
+run with `OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1` (already set in the Actions workflow).
+Secondary venues (OKX) may be geo-blocked from some networks; all secondary calls fail fast
+and the run degrades gracefully (Binance + Coinbase are the reliable core).
 
 ---
 

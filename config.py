@@ -26,5 +26,13 @@ FUNDING_EXTREME = 0.0005            # 0.05% per 8h ~ elevated
 OI_BUILD_PCT    = 5.0               # % 24h OI change flagged as build/unwind
 WHALE_USD       = 25_000           # trade >= this = "whale" print
 
+# Levels / liquidation model
+VP_BINS         = 50               # volume-profile price bins
+VP_WINDOW_H     = 168             # ~1 week for the profile
+LEVERAGE_TIERS  = (25, 50, 100)    # common perp leverage -> estimated liq magnets
+
+# Report tier: "free" (1-liner), "retail" (plain+key metrics), "pro" (everything)
+TIER = os.environ.get("TIER", "pro").lower()
+
 BRAND = "📊 Crypto Vol & Risk Intel"
 DISCLAIMER = "Analytics, not financial advice. We forecast RISK (volatility/regime), never direction. DYOR."
