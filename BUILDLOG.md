@@ -85,10 +85,24 @@ Files: `main.py`, `config.py`, `src/{http,exchanges,volatility,orderflow,levels,
   estimated liq levels without a key. Liquidation context also surfaced in plain words
   ("$X of longs got force-sold in 24h").
 
+- **Phase 5 (done 2026-08-29):** **Scenario Playbook** (`src/playbook.py`) — if-then risk map
+  per coin (key zones + liq clusters → up/down scenarios with invalidation + R:R; honest, both
+  sides, no "buy now"). **AI easy-language** (`src/llm.py`) via OpenRouter free model
+  (`OPENROUTER_API_KEY`), constrained to EXPLAIN only (no direction/buy/sell/invented numbers);
+  falls back to template plain-words without a key. **Free web dashboard** (`src/dashboard.py`
+  → `docs/`, GitHub Pages) — cards with plain words + metrics + playbook, auto-refresh 60s,
+  **live price via client-side Binance WebSocket**. Verified rendering in-browser.
+
 ### Data-source verdicts (tested 2026-08-29)
-- Coinglass: **all endpoints need an API key** (401 without) → made opt-in via secret.
-- FundingPulse (Apify): needs an Apify token → skipped for now (not truly keyless).
+- Coinglass: **all endpoints need an API key** (401 without); free tier delayed → dropped, opt-in only.
+- FundingPulse (Apify): needs an Apify token → skipped (not truly keyless).
+- **Recommended free alt = Hyperliquid public API** (no key, no rate limits; funding/OI + full
+  on-chain whale positions + liquidations). NEXT to integrate.
 - **Binance futures free/keyless winners added:** `topLongShortPositionRatio`, `takerlongshortRatio`.
+
+### Real-time answer (for the dashboard)
+Static Pages can't server-push. Solution shipped: **live price ticks client-side (browser→Binance
+WS)**, analysis refreshes every 30 min (cron). Fully live analytics = Phase-5 VPS.
 
 ---
 

@@ -137,5 +137,13 @@ def console(rep):
         out.append(f"  LIQ(24h): longs {_human_usd(rep['liq']['long_liq_usd'])} / shorts {_human_usd(rep['liq']['short_liq_usd'])}")
     if vp.get("poc"):
         out.append(f"  LEVELS: POC {vp['poc']:,.0f} | sup {vp.get('support')} | res {vp.get('resistance')} | liq↓ {L.get('long_liq',[None])[0]} liq↑ {L.get('short_liq',[None])[0]}")
+    pbk = rep.get("playbook")
+    if pbk:
+        out.append("  PLAYBOOK: " + pbk["headline"])
+        for s in pbk["scenarios"]:
+            rr = f" (R:R {s['rr']})" if s.get("rr") else ""
+            out.append(f"     • if {s['trigger']} → {s['target']}{rr}  [{s['note']}]")
+    if rep.get("ai_plain"):
+        out.append("  AI: " + rep["ai_plain"].replace("\n", " "))
     out.append("  VERDICT: " + rep["verdict"].replace("\n", "\n           "))
     return "\n".join(out)

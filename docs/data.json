@@ -1,0 +1,134 @@
+{
+ "updated": "2026-08-29 11:51 UTC",
+ "market": {
+  "risk": "RISK-OFF",
+  "note": "Most coins are in a high-vol storm. For a portfolio: reduce size / raise cash, expect big swings both ways.",
+  "storms": 2,
+  "n": 2,
+  "expanding": 0,
+  "avg_move": 2.044506418964447
+ },
+ "track": "building history — scorecard needs ~2 days of runs",
+ "coins": [
+  {
+   "coin": "BTC",
+   "price": 77660.41,
+   "chg": -2.454,
+   "plain": "BTC is down 2.5% today. It's a wild/high-risk day — big swings likely. Expect roughly a ±1.8% swing over the next 24h. Buyers are pushing harder than sellers right now. Big players are net selling.\n👉 If you just hold, expect a bumpy ride; don't panic on a spike, and avoid big new bets into the chaos.",
+   "vol": {
+    "move": 1.82593,
+    "lo": 76255.253279,
+    "hi": 79091.459565,
+    "regime": "STORM",
+    "pctile": 76.331967,
+    "expansion": "STEADY",
+    "conf": "HIGH"
+   },
+   "flow": {
+    "cvd": 48.455874,
+    "venues": 2,
+    "divergent": false,
+    "vpin": 0.727973,
+    "whale": "selling"
+   },
+   "deriv": {
+    "funding": 9.7e-05,
+    "fund_flag": "neutral",
+    "oi": -0.91648,
+    "top_ls": 2.0601,
+    "taker_ls": 1.0797
+   },
+   "liq": null,
+   "playbook": {
+    "headline": "⚡ High-risk — size down, wider stops · expected ±1.8% (24h)",
+    "context": [
+     "top traders net long (2.06)",
+     "funding neutral",
+     "flow buyers"
+    ],
+    "support": 77622.29,
+    "resistance": 78571.6,
+    "long_liq": 76883.81,
+    "short_liq": 78437.01,
+    "scenarios": [
+     {
+      "side": "long-watch",
+      "trigger": "holds/reclaims support 77,622",
+      "target": "78,572",
+      "invalidation": "76,884",
+      "rr": 1.3,
+      "note": "lower-risk long zone if buyers defend"
+     },
+     {
+      "side": "short-watch",
+      "trigger": "rejects resistance 78,572",
+      "target": "77,622",
+      "invalidation": "78,964",
+      "rr": 2.4,
+      "note": "pressure back toward support if sellers cap it"
+     },
+     {
+      "side": "risk",
+      "trigger": "break below 76,884",
+      "target": "next liq cluster",
+      "invalidation": "-",
+      "rr": null,
+      "note": "long-liquidation cascade risk (fast move down)"
+     }
+    ]
+   }
+  },
+  {
+   "coin": "ETH",
+   "price": 2436.57,
+   "chg": -2.751,
+   "plain": "ETH is down 2.8% today. It's a wild/high-risk day — big swings likely. Expect roughly a ±2.3% swing over the next 24h. Buyers are pushing harder than sellers right now.\n👉 If you just hold, expect a bumpy ride; don't panic on a spike, and avoid big new bets into the chaos.",
+   "vol": {
+    "move": 2.263083,
+    "lo": 2382.047661,
+    "hi": 2492.340293,
+    "regime": "STORM",
+    "pctile": 71.209016,
+    "expansion": "STEADY",
+    "conf": "MED"
+   },
+   "flow": {
+    "cvd": 9.804376,
+    "venues": 2,
+    "divergent": true,
+    "vpin": 0.763352,
+    "whale": "balanced"
+   },
+   "deriv": {
+    "funding": 2.8e-05,
+    "fund_flag": "neutral",
+    "oi": -2.7499,
+    "top_ls": 1.6647,
+    "taker_ls": 1.1019
+   },
+   "liq": null,
+   "playbook": {
+    "headline": "⚡ High-risk — size down, wider stops · expected ±2.3% (24h)",
+    "context": [
+     "top traders net long (1.66)",
+     "funding neutral",
+     "flow buyers"
+    ],
+    "support": null,
+    "resistance": 2437.93,
+    "long_liq": 2412.2,
+    "short_liq": 2460.94,
+    "scenarios": [
+     {
+      "side": "risk",
+      "trigger": "break below 2,412",
+      "target": "next liq cluster",
+      "invalidation": "-",
+      "rr": null,
+      "note": "long-liquidation cascade risk (fast move down)"
+     }
+    ]
+   }
+  }
+ ]
+}

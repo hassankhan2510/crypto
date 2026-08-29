@@ -11,6 +11,10 @@ DISCORD_WEBHOOK_URL = os.environ.get("DISCORD_WEBHOOK_URL", "").strip()
 # 30+ exchanges. Without it we fall back to estimated liq levels. Set as secret.
 COINGLASS_API_KEY = os.environ.get("COINGLASS_API_KEY", "").strip()
 
+# Optional: OpenRouter for AI easy-language explanations (use a FREE model).
+OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY", "").strip()
+OPENROUTER_MODEL   = os.environ.get("OPENROUTER_MODEL", "meta-llama/llama-3.3-70b-instruct:free")
+
 # Network
 HTTP_TIMEOUT = 12
 RETRIES = 3

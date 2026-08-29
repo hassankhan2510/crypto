@@ -24,15 +24,18 @@ jobs:
       - name: Run analysis + post to Discord
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          COINGLASS_API_KEY: ${{ secrets.COINGLASS_API_KEY }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          OPENROUTER_MODEL: ${{ vars.OPENROUTER_MODEL }}
           COINS: "BTC,ETH,SOL,BNB,XRP,DOGE"
           TIER: "pro"
           OPENBLAS_NUM_THREADS: "1"
           OMP_NUM_THREADS: "1"
         run: python main.py
-      - name: Commit forecast log (track record)
+      - name: Commit forecast log + dashboard
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add data/forecasts.csv || true
-          git diff --staged --quiet || git commit -m "log forecasts $(date -u +%FT%TZ)"
+          git add data/forecasts.csv docs/ || true
+          git diff --staged --quiet || git commit -m "update $(date -u +%FT%TZ)"
           git push

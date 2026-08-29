@@ -31,8 +31,18 @@ order-flow + derivatives context, writes an honest plain-English verdict, posts 
 - **Default branch:** `main`
 - **Secrets (never committed):**
   - `DISCORD_WEBHOOK_URL` (required) — GitHub Actions secret.
-  - `COINGLASS_API_KEY` (optional) — free-tier key unlocks REAL aggregated liquidations
-    (30+ exchanges). Without it, we use estimated liq levels + free Binance-futures signals.
+  - `OPENROUTER_API_KEY` (optional) — enables AI easy-language explanations via a FREE model.
+    Set repo **variable** `OPENROUTER_MODEL` to pick the model (default `meta-llama/llama-3.3-70b-instruct:free`).
+  - `COINGLASS_API_KEY` (optional, NOT recommended — free tier is delayed/paywalled).
+    Prefer free Hyperliquid/Binance-futures signals instead.
+
+### GitHub Pages dashboard (free)
+Repo → **Settings → Pages → Source = Deploy from a branch → `main` / `docs`**.
+Live at `https://<user>.github.io/crypto/`. The Action regenerates `docs/data.json` +
+`docs/index.html` every run and commits them. **Real-time:** the page shows a **live price
+ticker** (browser connects to Binance WebSocket directly), while the analysis/playbook
+refreshes at the cron cadence (every 30 min). Truly server-pushed live analytics would need a
+VPS (Phase 5) — not needed for launch.
 
 ---
 

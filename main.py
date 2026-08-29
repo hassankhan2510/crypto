@@ -9,7 +9,8 @@ Run:  python main.py            (posts to Discord if DISCORD_WEBHOOK_URL set)
 import sys
 from config import COINS, BRAND
 from src import exchanges as ex
-from src import volatility, orderflow, levels as lv, synthesize, discord_post, track, scorer, coinglass
+from src import (volatility, orderflow, levels as lv, synthesize, discord_post,
+                 track, scorer, coinglass, playbook as pb, llm, dashboard)
 
 def analyze_coin(coin):
     hourly = ex.binance_klines(coin, "1h", 1000)
@@ -28,7 +29,10 @@ def analyze_coin(coin):
              "taker_ls": ex.taker_ls(coin), "liq": coinglass.liquidations(coin)}
     xprice = {"coinbase": ex.coinbase_price(coin), "okx": ex.okx_price(coin)}
     mvol = ex.multi_volume(coin)
-    return synthesize.build_report(coin, spot24, vol, of, agg, vp, wr, deriv, xprice, mvol, lvls, vpin)
+    rep = synthesize.build_report(coin, spot24, vol, of, agg, vp, wr, deriv, xprice, mvol, lvls, vpin)
+    rep["playbook"] = pb.build(rep)
+    rep["ai_plain"] = llm.easy_language(llm.facts_string(rep))   # None if no OPENROUTER key
+    return rep
 
 def main():
     dry = "--dry" in sys.argv
@@ -52,6 +56,7 @@ def main():
     sc = scorer.score(); track_line = scorer.summary_text(sc)
     if track_line: print("  " + track_line.replace("**", ""))
 
+    dashboard.write(reports, portfolio, track_line)     # GitHub Pages
     if not dry:
         discord_post.post(reports, portfolio, track_line)
     else:

@@ -18,7 +18,8 @@ def _fmt_levels(rep):
 
 def _embed(rep):
     v = rep["vol"]; reg = v["regime"] if v else "NORMAL"
-    fields = [{"name": "🟢 In plain words", "value": rep["plain"][:1000], "inline": False}]
+    plain = rep.get("ai_plain") or rep["plain"]
+    fields = [{"name": "🟢 In plain words", "value": plain[:1000], "inline": False}]
 
     if TIER in ("retail", "pro"):
         if v:
@@ -43,6 +44,12 @@ def _embed(rep):
             "value": f"Agg CVD **{ag.get('agg_pct',0):+.1f}%** ({ag.get('venues',0)} venues){div}\nVPIN toxicity **{vpin_s}**\nWhales **{rep['wr']['whale']}** · Retail **{rep['wr']['retail']}**", "inline": False})
         fields.append({"name": "🎯 Key levels (est.)", "value": _fmt_levels(rep), "inline": False})
 
+    pbk = rep.get("playbook")
+    if pbk and pbk.get("scenarios"):
+        sc = "\n".join(f"• **{s['trigger']}** → {s['target']}" + (f" (R:R {s['rr']})" if s.get("rr") else "") + f"\n  _{s['note']}_"
+                       for s in pbk["scenarios"])
+        head = pbk["headline"] + ("\nContext: " + ", ".join(pbk["context"]) if pbk.get("context") else "")
+        fields.append({"name": "🗺️ Scenario Playbook", "value": (head + "\n" + sc)[:1024], "inline": False})
     fields.append({"name": "🧭 Verdict (risk, not a signal)", "value": rep["verdict"][:1000], "inline": False})
     return {"title": f"{rep['coin']}  ·  ${rep['price']:,.2f}  ({rep['chg_pct']:+.2f}% 24h)",
             "color": COLOR.get(reg, 0x868E96), "fields": fields}
