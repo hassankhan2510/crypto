@@ -26,8 +26,14 @@ def _embed(rep):
                 "value": f"±**{v['move_pct']:.1f}%** · `{v['range_lo']:,.0f}–{v['range_hi']:,.0f}`\n**{reg}** ({v['regime_pctile']:.0f}%ile) · {v['expansion']}\nconf {v['confidence']}", "inline": True})
         if rep["funding"] is not None:
             oi = "n/a" if rep["oi_chg"] is None else f"{rep['oi_chg']:+.1f}%"
-            fields.append({"name": "🔧 Derivatives",
-                "value": f"Funding **{rep['funding']*100:+.3f}%** ({rep['fund_flag']})\nOI **{oi}** {rep['oi_flag']}\nL/S **{rep['long_short']}**", "inline": True})
+            val = f"Funding **{rep['funding']*100:+.3f}%** ({rep['fund_flag']})\nOI **{oi}** {rep['oi_flag']}\nCrowd L/S **{rep['long_short']}**"
+            if rep.get("top_ls"): val += f"\nTop traders L/S **{rep['top_ls']:.2f}**"
+            if rep.get("taker_ls"): val += f"\nFut taker B/S **{rep['taker_ls']:.2f}**"
+            fields.append({"name": "🔧 Derivatives", "value": val, "inline": True})
+        if rep.get("liq"):
+            from src.synthesize import _human_usd
+            fields.append({"name": "💥 Liquidations (24h)",
+                "value": f"Longs wiped **{_human_usd(rep['liq']['long_liq_usd'])}**\nShorts wiped **{_human_usd(rep['liq']['short_liq_usd'])}**", "inline": True})
 
     if TIER == "pro":
         ag = rep.get("agg") or {}

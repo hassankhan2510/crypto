@@ -11,6 +11,7 @@ def build_report(coin, spot24, vol, of, agg, vp, wr, deriv, xprice, mvol, levels
     prices = [p for p in [price, xprice.get("coinbase"), xprice.get("okx")] if p]
     spread_bp = (max(prices) - min(prices)) / price * 1e4 if len(prices) > 1 else 0.0
     fr, oi, ls = deriv.get("funding"), deriv.get("oi_chg"), deriv.get("long_short")
+    top_ls, taker_ls, liq = deriv.get("top_ls"), deriv.get("taker_ls"), deriv.get("liq")
 
     fund_flag = ""
     if fr is not None:
@@ -19,7 +20,7 @@ def build_report(coin, spot24, vol, of, agg, vp, wr, deriv, xprice, mvol, levels
     oi_flag = "" if oi is None else ("building" if oi > OI_BUILD_PCT else "unwinding" if oi < -OI_BUILD_PCT else "flat")
 
     # ---------- PLAIN WORDS (beginner) ----------
-    plain = _plain(coin, spot24, vol, agg, wr, fr, oi)
+    plain = _plain(coin, spot24, vol, agg, wr, fr, oi, liq)
 
     # ---------- VERDICT (risk, honest) ----------
     verdict, stand_aside = _verdict(vol, of, wr, fr, oi)
@@ -28,12 +29,20 @@ def build_report(coin, spot24, vol, of, agg, vp, wr, deriv, xprice, mvol, levels
         "coin": coin, "price": price, "chg_pct": spot24["chg_pct"],
         "vol": vol, "of": of, "agg": agg, "vp": vp, "wr": wr, "vpin": vpin_v,
         "funding": fr, "fund_flag": fund_flag, "oi_chg": oi, "oi_flag": oi_flag,
-        "long_short": ls, "xspread_bp": spread_bp, "n_exch": len(prices),
+        "long_short": ls, "top_ls": top_ls, "taker_ls": taker_ls, "liq": liq,
+        "xspread_bp": spread_bp, "n_exch": len(prices),
         "mvol": mvol, "levels": levels,
         "plain": plain, "verdict": verdict, "stand_aside": stand_aside,
     }
 
-def _plain(coin, spot24, vol, agg, wr, fr, oi):
+def _human_usd(x):
+    ax = abs(x)
+    if ax >= 1e9: return f"${x/1e9:.1f}B"
+    if ax >= 1e6: return f"${x/1e6:.0f}M"
+    if ax >= 1e3: return f"${x/1e3:.0f}K"
+    return f"${x:.0f}"
+
+def _plain(coin, spot24, vol, agg, wr, fr, oi, liq=None):
     chg = spot24["chg_pct"]
     move = f"{coin} is {'up' if chg>=0 else 'down'} {abs(chg):.1f}% today."
     if not vol:
@@ -63,7 +72,14 @@ def _plain(coin, spot24, vol, agg, wr, fr, oi):
         mean = "👉 Not much to do here — calm before a possible move. Patience beats forcing a trade."
     else:
         mean = "👉 Normal conditions. Nothing urgent for a long-term holder."
-    return f"{move} {calm} {swing} {who}{big}\n{mean}"
+    liq_note = ""
+    if liq and (liq.get("long_liq_usd", 0) + liq.get("short_liq_usd", 0)) > 0:
+        ll, sl = liq["long_liq_usd"], liq["short_liq_usd"]
+        if ll > sl * 1.3:
+            liq_note = f" ({_human_usd(ll)} of bullish bets got force-sold in 24h.)"
+        elif sl > ll * 1.3:
+            liq_note = f" ({_human_usd(sl)} of bearish bets got squeezed out in 24h.)"
+    return f"{move} {calm} {swing} {who}{big}{liq_note}\n{mean}"
 
 def _verdict(vol, of, wr, fr, oi):
     lines, stand_aside = [], False
@@ -114,7 +130,11 @@ def console(rep):
     out.append(f"  FLOW: xexch CVD {ag.get('agg_pct',0):+.1f}% ({ag.get('venues',0)} venues{div_s}) | VPIN {vpin_s} | whales {rep['wr']['whale']}")
     if rep["funding"] is not None:
         oi = 'n/a' if rep['oi_chg'] is None else f"{rep['oi_chg']:+.1f}%"
-        out.append(f"  DERIV: funding {rep['funding']*100:+.3f}% ({rep['fund_flag']}) | OI {oi} {rep['oi_flag']} | L/S {rep['long_short']}")
+        top = rep.get('top_ls'); tak = rep.get('taker_ls')
+        extra = (f" | topL/S {top:.2f}" if top else "") + (f" | takerB/S {tak:.2f}" if tak else "")
+        out.append(f"  DERIV: funding {rep['funding']*100:+.3f}% ({rep['fund_flag']}) | OI {oi} {rep['oi_flag']} | L/S {rep['long_short']}{extra}")
+    if rep.get("liq"):
+        out.append(f"  LIQ(24h): longs {_human_usd(rep['liq']['long_liq_usd'])} / shorts {_human_usd(rep['liq']['short_liq_usd'])}")
     if vp.get("poc"):
         out.append(f"  LEVELS: POC {vp['poc']:,.0f} | sup {vp.get('support')} | res {vp.get('resistance')} | liq↓ {L.get('long_liq',[None])[0]} liq↑ {L.get('short_liq',[None])[0]}")
     out.append("  VERDICT: " + rep["verdict"].replace("\n", "\n           "))

@@ -29,7 +29,10 @@ order-flow + derivatives context, writes an honest plain-English verdict, posts 
 
 - **URL:** https://github.com/hassankhan2510/crypto.git
 - **Default branch:** `main`
-- **Secrets (never committed):** `DISCORD_WEBHOOK_URL` — set as a GitHub Actions secret.
+- **Secrets (never committed):**
+  - `DISCORD_WEBHOOK_URL` (required) — GitHub Actions secret.
+  - `COINGLASS_API_KEY` (optional) — free-tier key unlocks REAL aggregated liquidations
+    (30+ exchanges). Without it, we use estimated liq levels + free Binance-futures signals.
 
 ---
 

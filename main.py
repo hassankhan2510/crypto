@@ -9,7 +9,7 @@ Run:  python main.py            (posts to Discord if DISCORD_WEBHOOK_URL set)
 import sys
 from config import COINS, BRAND
 from src import exchanges as ex
-from src import volatility, orderflow, levels as lv, synthesize, discord_post, track, scorer
+from src import volatility, orderflow, levels as lv, synthesize, discord_post, track, scorer, coinglass
 
 def analyze_coin(coin):
     hourly = ex.binance_klines(coin, "1h", 1000)
@@ -24,7 +24,8 @@ def analyze_coin(coin):
     vp    = lv.volume_profile(hourly)
     lvls  = lv.liquidation_levels(spot24["price"])
     deriv = {"funding": ex.funding_rate(coin), "oi_chg": ex.open_interest_change(coin),
-             "long_short": ex.long_short_ratio(coin)}
+             "long_short": ex.long_short_ratio(coin), "top_ls": ex.top_trader_ls(coin),
+             "taker_ls": ex.taker_ls(coin), "liq": coinglass.liquidations(coin)}
     xprice = {"coinbase": ex.coinbase_price(coin), "okx": ex.okx_price(coin)}
     mvol = ex.multi_volume(coin)
     return synthesize.build_report(coin, spot24, vol, of, agg, vp, wr, deriv, xprice, mvol, lvls, vpin)

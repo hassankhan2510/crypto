@@ -123,3 +123,21 @@ def long_short_ratio(coin):
         return float(j[-1]["longShortRatio"])
     except Exception:
         return None
+
+def top_trader_ls(coin):
+    """Top-trader (large accounts) long/short POSITION ratio — 'smart money' lean. Free."""
+    try:
+        j = get_json(f"{BINANCE_F}/futures/data/topLongShortPositionRatio",
+                     {"symbol": f"{coin}USDT", "period": "1h", "limit": 1}, tries=2, timeout=8)
+        return float(j[-1]["longShortRatio"])
+    except Exception:
+        return None
+
+def taker_ls(coin):
+    """Futures taker buy/sell volume ratio — aggressive futures flow (>1 buyers). Free."""
+    try:
+        j = get_json(f"{BINANCE_F}/futures/data/takerlongshortRatio",
+                     {"symbol": f"{coin}USDT", "period": "1h", "limit": 1}, tries=2, timeout=8)
+        return float(j[-1]["buySellRatio"])
+    except Exception:
+        return None

@@ -7,6 +7,10 @@ COINS = os.environ.get("COINS", "BTC,ETH,SOL,BNB,XRP,DOGE").split(",")
 # Discord webhook (set as a GitHub Actions secret DISCORD_WEBHOOK_URL)
 DISCORD_WEBHOOK_URL = os.environ.get("DISCORD_WEBHOOK_URL", "").strip()
 
+# Optional: Coinglass API key (free tier) for REAL aggregated liquidations across
+# 30+ exchanges. Without it we fall back to estimated liq levels. Set as secret.
+COINGLASS_API_KEY = os.environ.get("COINGLASS_API_KEY", "").strip()
+
 # Network
 HTTP_TIMEOUT = 12
 RETRIES = 3
