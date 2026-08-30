@@ -17,6 +17,7 @@ def _coin_json(r):
         "coin": r["coin"], "price": _f(r["price"]), "chg": _f(r["chg_pct"]),
         "plain": (r.get("ai_plain") or r.get("plain", "")).replace("**", ""),
         "vol": {"move": _f(v.get("move_pct")), "lo": _f(v.get("range_lo")), "hi": _f(v.get("range_hi")),
+                "m30": _f(v.get("m30_pct")), "h1": _f(v.get("h1_pct")),
                 "regime": v.get("regime"), "pctile": _f(v.get("regime_pctile")),
                 "expansion": v.get("expansion"), "conf": v.get("confidence")} if v else None,
         "flow": {"cvd": _f(ag.get("agg_pct")), "venues": ag.get("venues"),
@@ -92,8 +93,8 @@ function card(c){
    <div><span class="px" id="px-${c.coin}">$${fmt(c.price,2)}</span>
      <span class="chg ${c.chg>=0?"up":"down"}"> ${c.chg>=0?"+":""}${fmt(c.chg,2)}%</span></div></div>
   <div class="plain">${c.plain||""}</div>
-  <div class="row"><span><span class="k">Exp move</span> ±${fmt(v.move,1)}%</span>
-   <span><span class="k">Range</span> ${fmt(v.lo)}–${fmt(v.hi)}</span>
+  <div class="row"><span><span class="k">Exp move</span> ${v.m30!=null?`30m ±${fmt(v.m30,1)}% · `:""}${v.h1!=null?`1h ±${fmt(v.h1,1)}% · `:""}24h ±${fmt(v.move,1)}%</span></div>
+  <div class="row"><span><span class="k">24h range</span> ${fmt(v.lo)}–${fmt(v.hi)}</span>
    <span><span class="k">Vol</span> ${v.expansion||"–"}</span></div>
   <div class="row"><span><span class="k">Flow CVD</span> ${fmt(fl.cvd,1)}%${fl.divergent?" ⚠":""}</span>
    <span><span class="k">VPIN</span> ${fmt(fl.vpin,2)}</span>

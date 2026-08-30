@@ -18,6 +18,12 @@ def analyze_coin(coin):
     try: agg_tr = ex.binance_aggtrades(coin, 1000)
     except Exception: agg_tr = None
     vol   = volatility.analyze(hourly)
+    if vol:
+        try:
+            c5 = ex.binance_klines(coin, "5m", 1000)["c"]
+            sh = volatility.multi_short(c5)
+            if sh: vol.update(sh)                    # adds m30_*/h1_* forecasts
+        except Exception: pass
     of    = orderflow.cvd_state(hourly)
     agg   = orderflow.agg_cvd(coin, agg_tr)
     vpin  = orderflow.vpin(agg_tr)

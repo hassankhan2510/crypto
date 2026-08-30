@@ -23,8 +23,12 @@ def _embed(rep):
 
     if TIER in ("retail", "pro"):
         if v:
-            fields.append({"name": "📈 Volatility (24h)",
-                "value": f"±**{v['move_pct']:.1f}%** · `{v['range_lo']:,.0f}–{v['range_hi']:,.0f}`\n**{reg}** ({v['regime_pctile']:.0f}%ile) · {v['expansion']}\nconf {v['confidence']}", "inline": True})
+            hz = ""
+            if v.get("m30_pct") is not None: hz += f"30m ±{v['m30_pct']:.1f}% · "
+            if v.get("h1_pct") is not None: hz += f"1h ±{v['h1_pct']:.1f}% · "
+            hz += f"**24h ±{v['move_pct']:.1f}%**"
+            fields.append({"name": "📈 Volatility forecast",
+                "value": f"{hz}\n24h range `{v['range_lo']:,.0f}–{v['range_hi']:,.0f}`\n**{reg}** ({v['regime_pctile']:.0f}%ile) · {v['expansion']}\nconf {v['confidence']}", "inline": True})
         if rep["funding"] is not None:
             oi = "n/a" if rep["oi_chg"] is None else f"{rep['oi_chg']:+.1f}%"
             val = f"Funding **{rep['funding']*100:+.3f}%** ({rep['fund_flag']})\nOI **{oi}** {rep['oi_flag']}\nCrowd L/S **{rep['long_short']}**"

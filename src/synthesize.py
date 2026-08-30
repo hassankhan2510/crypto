@@ -123,7 +123,10 @@ def console(rep):
     out = [f"\n=== {rep['coin']}  ${rep['price']:,.2f}  ({rep['chg_pct']:+.2f}% 24h)  [{rep['n_exch']} exch, spread {rep['xspread_bp']:.1f}bp] ==="]
     out.append("  PLAIN: " + rep["plain"].replace("**", "").replace("\n", "\n         "))
     if v:
-        out.append(f"  VOL: ±{v['move_pct']:.1f}%/24h (range {v['range_lo']:,.0f}-{v['range_hi']:,.0f}) | {v['regime']} {v['regime_pctile']:.0f}%ile | {v['expansion']} | conf {v['confidence']}")
+        sh = ""
+        if v.get("m30_pct") is not None: sh += f" | 30m ±{v['m30_pct']:.1f}%"
+        if v.get("h1_pct") is not None: sh += f" | 1h ±{v['h1_pct']:.1f}%"
+        out.append(f"  VOL: 24h ±{v['move_pct']:.1f}% (range {v['range_lo']:,.0f}-{v['range_hi']:,.0f}){sh} | {v['regime']} {v['regime_pctile']:.0f}%ile | {v['expansion']} | conf {v['confidence']}")
     ag = rep.get("agg") or {}
     vpin_s = f"{rep['vpin']:.2f}" if rep.get("vpin") is not None else "n/a"
     div_s = ", DIVERGENT" if ag.get("divergence") else ""
