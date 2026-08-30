@@ -1,1 +1,1 @@
-ts_utc,coin,price,fc_move_pct,range_lo,range_hi,regime,regime_pctile,expansion,confidence,funding,oi_chg,long_short,cvd_24h_pct
+ts_utc,coin,price,headline_horizon,fc_move_pct,cost_ratio,cost_state,h1_pct,h1_lo,h1_hi,h1_r2,h4_pct,h4_lo,h4_hi,h4_r2,h24_pct,h24_lo,h24_hi,h24_r2,regime,regime_pctile,regime_anchored,expansion,confidence,season_now,funding,oi_chg,long_short,cvd_1h_pct,beta_to_factor

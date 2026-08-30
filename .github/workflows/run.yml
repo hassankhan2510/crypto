@@ -3,6 +3,7 @@ name: crypto-intel
 on:
   schedule:
     - cron: "*/30 * * * *"      # every 30 minutes (UTC). GitHub may delay under load.
+    - cron: "17 6 * * *"        # daily: re-validate the OOS claim
   workflow_dispatch:            # allow manual run from the Actions tab
 
 permissions:
@@ -14,13 +15,27 @@ concurrency:
 
 jobs:
   run:
+    if: github.event.schedule != '17 6 * * *'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+          cache: pip
+
+      # The HAR needs ~2 years of hourly bars. Without this cache every run
+      # re-pages ~18 requests per coin; with it, only the new tail is fetched.
+      - name: Restore price-history cache
+        uses: actions/cache@v4
+        with:
+          path: data/cache
+          key: klines-${{ github.run_id }}
+          restore-keys: |
+            klines-
+
       - run: pip install -r requirements.txt
+
       - name: Run analysis + post to Discord
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
@@ -31,7 +46,9 @@ jobs:
           TIER: "pro"
           OPENBLAS_NUM_THREADS: "1"
           OMP_NUM_THREADS: "1"
+          PYTHONUTF8: "1"
         run: python main.py
+
       - name: Commit forecast log + dashboard
         run: |
           git config user.name  "github-actions[bot]"
@@ -39,3 +56,28 @@ jobs:
           git add data/forecasts.csv docs/ || true
           git diff --staged --quiet || git commit -m "update $(date -u +%FT%TZ)"
           git push
+
+  # The product's central claim is "validated out-of-sample". This job is what
+  # keeps that honest: it re-runs the walk-forward over full history and fails
+  # loudly if any horizon stops beating its benchmarks. Daily is enough.
+  validate:
+    if: github.event_name == 'workflow_dispatch' || github.event.schedule == '17 6 * * *'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Walk-forward OOS validation
+        env:
+          COINS: "BTC,ETH,SOL"
+          OPENBLAS_NUM_THREADS: "1"
+          OMP_NUM_THREADS: "1"
+          PYTHONUTF8: "1"
+        run: python validate.py --json validation.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: validation-report
+          path: validation.json

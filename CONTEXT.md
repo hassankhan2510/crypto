@@ -14,7 +14,10 @@ order-flow + derivatives context, writes an honest plain-English verdict, posts 
 **Discord** channel, and logs every forecast to a git-committed file (the track record).
 
 **Positioning (important — this is the whole moat):**
-- We sell **validated RISK intelligence**, not direction signals.
+- We sell **validated RISK + COST intelligence**, not direction signals.
+- The cost gate is the differentiator nobody else ships: a forecast range is
+  worthless if it is smaller than the round trip. Measured, BTC 30m: fees eat 68%
+  of the mean move. We say so.
 - Direction (up/down) is *not* predictable net of cost — proven across ~25 experiments and
   two written papers. Volatility (move *size*) **is** predictable (HAR, OOS R² 0.11–0.43).
 - So we forecast expected range / regime / expansion, show real order-flow & positioning
@@ -58,14 +61,19 @@ cryptointel/
   .gitignore
   .github/workflows/
     run.yml               # GitHub Actions cron (every 30 min) + auto-commit log
+  validate.py             # walk-forward OOS proof of the model (run this; it is the moat)
   src/
     http.py               # resilient HTTP GET (retries/timeout)
-    exchanges.py          # free multi-exchange data (Binance spot+futures, Coinbase, OKX)
-    volatility.py         # HAR volatility forecast + regime + expansion (the differentiator)
-    orderflow.py          # taker CVD + whale-vs-retail split
-    synthesize.py         # combines everything → per-coin report + honest verdict
+    exchanges.py          # PAGINATED multi-year klines + disk cache; free venue data
+    volatility.py         # multi-horizon HAR, walk-forward OOS R2, seasonal feature, regime
+    cost.py               # round-trip cost + the gate that decides if a horizon is tradeable
+    orderflow.py          # CVD from 5m klines (hours-to-months), percentile-normalised, VPIN
+    levels.py             # volume profile + value area (NO fabricated liquidation levels)
+    factor.py             # BTC factor + beta/residual decomposition per coin
+    playbook.py           # risk map: cost table, timing, crowding risks (NO direction calls)
+    synthesize.py         # combines everything -> per-coin report + honest verdict
     discord_post.py       # rich-embed Discord webhook poster (no-op if no webhook)
-    track.py              # appends every forecast to data/forecasts.csv (track record)
+    track.py              # appends every horizon of every forecast to data/forecasts.csv
   data/
     forecasts.csv         # immutable, git-committed forecast log (created on first run)
 ```
@@ -78,9 +86,13 @@ cryptointel/
    - Binance spot 1h klines (OHLCV + real taker-buy volume = aggressor flow), 24h ticker, aggTrades.
    - Binance futures: funding rate, open-interest history, global long/short ratio.
    - Coinbase + OKX last price (cross-exchange agreement / spread).
-2. **volatility.py** fits a HAR model (RV over 24h/72h/168h → next-24h realized vol) and
-   returns expected ±% move, price range, regime percentile, expansion state, confidence.
-3. **orderflow.py** computes taker CVD lean (4h/24h) and whale-vs-retail net flow.
+2. **volatility.py** fits HAR at 30m/1h/4h/24h, each scored by a real walk-forward
+   OOS R2, with a causal hour-of-day seasonal term as a FITTED feature (multiplying
+   by the seasonal factor after the fact makes it worse -- the HAR's short lookback
+   already encodes the hour).
+2b. **cost.py** grades every horizon against the round trip and picks the headline.
+3. **orderflow.py** computes taker CVD lean at 1h/4h/24h from 5m klines, each as a
+   percentile of its own 30-day history, plus volume-bucketed VPIN.
 4. **synthesize.py** merges vol + flow + derivatives into a report dict and an honest verdict
    (risk regime, squeeze warnings, stand-aside calls). No buy/sell.
 5. **main.py** prints to console, **track.py** logs the forecast, **discord_post.py** posts embeds.
@@ -153,7 +165,10 @@ Everything a new person needs is in this file + README.md. Point them here first
 ## 8. Configuration knobs (`config.py`)
 
 - `COINS` — which coins (env `COINS` overrides).
-- `HAR_LOOKBACKS_H`, `FWD_H` — vol model windows / forecast horizon.
+- `HISTORY_1H_BARS` / `HISTORY_5M_BARS` — how much history to fit on. THESE MATTER:
+  fitting on 42 days (the old behaviour) gave a NEGATIVE OOS R2; 2 years gives +0.3.
+- `FEE_TAKER_BPS` / `FEE_MAKER_BPS` / `SLIP_BPS` / `EXEC_STYLE` — the cost model.
+- `HORIZONS`, `HAR_LOOKBACKS_1H`, `HAR_LOOKBACKS_5M` — vol model windows / horizons.
 - `STORM_PCTILE`, `CALM_PCTILE`, `EXPANSION_*` — regime thresholds.
 - `FUNDING_EXTREME`, `OI_BUILD_PCT`, `WHALE_USD` — derivatives/flow flags.
 
@@ -179,6 +194,10 @@ and the run degrades gracefully (Binance + Coinbase are the reliable core).
 ## 10. Hard rules
 
 - **Never** commit secrets (webhook, tokens). They live in GitHub Actions secrets / local ENV only.
+- **Never** publish an in-sample fit statistic as if it were out-of-sample. Run
+  `validate.py`; if a horizon stops beating naive, pull its confidence figure.
+- **Never** invent a level (the old `liquidation_levels` returned -1/-2/-4% from
+  spot and the playbook used it as a STOP). No data, no level.
 - **Never** ship "buy/sell direction" signals — it's a coin flip, the industry loses money
   (UTS 2025: avg paid signal group −4.2%), and it kills the brand. Our product is *risk*.
 - Keep every forecast logged and honest. The track record IS the business.

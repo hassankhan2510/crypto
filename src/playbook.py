@@ -1,79 +1,103 @@
-"""Scenario Playbook — turns metrics into an actionable IF-THEN risk map.
-Honest by design: we give BOTH sides (up-scenario and down-scenario) with key
-zones, invalidation, expected reach and R:R. It's a risk map a trader acts on
-with their own discretion — never a 'buy now' call."""
+"""Risk map -- what the conditions are, what they cost, and when to stand aside.
 
-def _rr(entry, target, stop):
-    try:
-        risk = abs(entry - stop); reward = abs(target - entry)
-        return round(reward / risk, 1) if risk > 0 else None
-    except Exception:
-        return None
+This used to emit `side: "long-watch"` / `"short-watch"` with a trigger, a target,
+an invalidation and an R:R. Strip the hedging words and that is a trade call: the
+exact thing CONTEXT.md section 10 forbids, and the thing the whole product claims
+not to sell. Worse, its "invalidation" was the fabricated liquidation level and
+its "target" was the nearest high-volume bin, so the R:R was a confident-looking
+number computed from two made-up inputs.
+
+So the direction scenarios are gone. What replaces them is the thing a trader
+actually needs and nobody else publishes: is the expected move big enough to pay
+for the round trip, at which horizon, and in which hours.
+"""
+from config import HORIZONS, PRIMARY_HORIZON
+from src import cost
+
 
 def build(rep):
-    v = rep["vol"]
+    v = rep.get("vol")
     if not v:
         return None
-    price = rep["price"]; vp = rep.get("vp") or {}; L = rep.get("levels") or {}
-    reg, move = v["regime"], v["move_pct"]
-    sup = vp.get("support"); res = vp.get("resistance"); poc = vp.get("poc")
-    long_liq = (L.get("long_liq") or [None])[0]      # nearest est. long-liq (below)
-    short_liq = (L.get("short_liq") or [None])[0]    # nearest est. short-liq (above)
 
-    # ---- bias CONTEXT (positioning) — not a direction call ----
+    gate = v.get("headline_gate") or {}
+    reg, exp = v.get("regime"), v.get("expansion")
+    label = v.get("headline_label", "?")
+    move = v.get("move_pct")
+
+    # ---- headline: cost first, regime second ----
+    if not gate or gate.get("state") == "DEAD":
+        headline = ("🚫 No tradeable horizon — every forecast window we publish is "
+                    "smaller than what a round trip costs. Stand aside.")
+    elif gate.get("state") == "THIN":
+        headline = (f"🟠 Marginal — best horizon {label} (±{move:.2f}%), only "
+                    f"{gate['ratio']:.1f}x the round trip. Fees decide the outcome, not the move.")
+    elif reg == "CALM" and exp == "CONTRACTING":
+        headline = (f"😴 Compressed — {label} window clears costs ({gate['ratio']:.1f}x) "
+                    f"but vol is contracting. Patience beats forcing it.")
+    elif reg == "STORM":
+        headline = (f"⚡ High-risk — {label} ±{move:.2f}% ({gate['ratio']:.1f}x costs). "
+                    f"Size DOWN, widen stops, or stay out.")
+    else:
+        headline = (f"🟡 Tradeable — best horizon {label} ±{move:.2f}% "
+                    f"({gate['ratio']:.1f}x the round trip).")
+
+    # ---- when: the clock, from the measured hour profile ----
+    timing = []
+    if v.get("season_now") is not None:
+        f = v["season_now"]
+        timing.append(
+            f"this hour runs {f:.2f}x the coin's average variance "
+            f"({'busier' if f >= 1 else 'quieter'} than normal)")
+    if v.get("season_peak_h") is not None:
+        timing.append(f"busiest {v['season_peak_h']:02d}:00 UTC, deadest {v['season_trough_h']:02d}:00 UTC"
+                      + (f" ({v['season_ratio']:.2f}x spread)" if v.get("season_ratio") else ""))
+
+    # ---- positioning CONTEXT, explicitly not a direction call ----
     ctx = []
     t = rep.get("top_ls")
-    if t: ctx.append(f"top traders {'net long' if t>1.2 else 'net short' if t<0.8 else 'balanced'} ({t:.2f})")
-    if rep.get("funding") is not None: ctx.append(f"funding {rep.get('fund_flag','')}")
-    ag = rep.get("agg") or {}
-    if ag.get("venues"): ctx.append(f"flow {'buyers' if ag['agg_pct']>3 else 'sellers' if ag['agg_pct']<-3 else 'balanced'}")
+    if t:
+        ctx.append(f"top traders {'net long' if t > 1.2 else 'net short' if t < 0.8 else 'balanced'} ({t:.2f})")
+    if rep.get("funding") is not None:
+        ctx.append(f"funding {rep.get('fund_flag', '')}")
+    of = rep.get("of") or {}
+    if of.get("cvd_1h_pctile") is not None:
+        ctx.append(f"1h aggressor lean at {of['cvd_1h_pctile']:.0f}th pctile of its 30d range")
 
-    scenarios = []
-    if reg == "CALM" and v["expansion"] == "CONTRACTING":
-        headline = "😴 No setup — compressed/quiet. Stand aside; a move usually follows the quiet."
-    else:
-        headline = f"{'⚡ High-risk — size down, wider stops' if reg=='STORM' else '🟡 Normal conditions'} · expected ±{move:.1f}% (24h)"
-        # UP scenario
-        if sup and res:
-            stop = long_liq if (long_liq and long_liq < sup) else round(sup * 0.995, 2)
-            scenarios.append({
-                "side": "long-watch",
-                "trigger": f"holds/reclaims support {sup:,.0f}",
-                "target": f"{res:,.0f}",
-                "invalidation": f"{stop:,.0f}",
-                "rr": _rr(sup, res, stop),
-                "note": "lower-risk long zone if buyers defend"})
-            # DOWN scenario
-            stop2 = short_liq if (short_liq and short_liq > res) else round(res * 1.005, 2)
-            scenarios.append({
-                "side": "short-watch",
-                "trigger": f"rejects resistance {res:,.0f}",
-                "target": f"{sup:,.0f}",
-                "invalidation": f"{stop2:,.0f}",
-                "rr": _rr(res, sup, stop2),
-                "note": "pressure back toward support if sellers cap it"})
-        # cascade warning
-        if long_liq:
-            scenarios.append({
-                "side": "risk",
-                "trigger": f"break below {long_liq:,.0f}",
-                "target": "next liq cluster", "invalidation": "-", "rr": None,
-                "note": "long-liquidation cascade risk (fast move down)"})
+    # ---- zones: descriptive only, no targets, no R:R ----
+    vp = rep.get("vp") or {}
+    zones = {k: vp.get(k) for k in ("poc", "val", "vah", "hvn_above", "hvn_below")}
 
-    return {"headline": headline, "context": ctx, "poc": poc,
-            "support": sup, "resistance": res,
-            "long_liq": long_liq, "short_liq": short_liq,
-            "expected_move_pct": move, "scenarios": scenarios}
+    # ---- the risk that IS real: crowding + expansion ----
+    risks = []
+    fr, oi = rep.get("funding"), rep.get("oi_chg")
+    if fr is not None and oi is not None and abs(fr) > 0.0005 and oi > 5.0:
+        risks.append(f"crowded {'longs' if fr > 0 else 'shorts'} + rising OI → violent unwind possible")
+    if exp == "EXPANDING":
+        risks.append("volatility expanding — the range is opening, direction unknown")
+    if v.get("regime_pctile", 0) >= 70 and not v.get("regime_anchored"):
+        risks.append("high percentile but absolutely small move — a busy-looking dead tape")
+
+    return {"headline": headline, "context": ctx, "timing": timing, "zones": zones,
+            "risks": risks, "cost_table": v.get("cost_table", []),
+            "expected_move_pct": move, "horizon": label,
+            "cost_state": gate.get("state"), "cost_ratio": gate.get("ratio")}
+
 
 def to_text(pb):
-    if not pb: return ""
+    if not pb:
+        return ""
     lines = [pb["headline"]]
-    if pb["context"]: lines.append("Context: " + ", ".join(pb["context"]))
-    if pb.get("support") and pb.get("resistance"):
-        lines.append(f"Zones: sup {pb['support']:,.0f} · res {pb['resistance']:,.0f}" +
-                     (f" · liq↓ {pb['long_liq']:,.0f}" if pb.get('long_liq') else "") +
-                     (f" · liq↑ {pb['short_liq']:,.0f}" if pb.get('short_liq') else ""))
-    for s in pb["scenarios"]:
-        rr = f" (R:R {s['rr']})" if s.get("rr") else ""
-        lines.append(f"• If {s['trigger']} → {s['target']}{rr} — {s['note']} [inval {s['invalidation']}]")
+    if pb.get("timing"):
+        lines.append("When: " + "; ".join(pb["timing"]))
+    if pb.get("context"):
+        lines.append("Context: " + ", ".join(pb["context"]))
+    z = pb.get("zones") or {}
+    if z.get("poc"):
+        lines.append(f"Zones: POC {z['poc']:,.0f} · value {z.get('val'):,.0f}-{z.get('vah'):,.0f}"
+                     if z.get("val") and z.get("vah") else f"Zones: POC {z['poc']:,.0f}")
+    for c in pb.get("cost_table", []):
+        lines.append(f"• {c['label']:>4}  ±{c['move_pct']:.2f}%  {c['ratio']:5.1f}x cost  [{c['state']}]")
+    for r in pb.get("risks", []):
+        lines.append(f"⚠ {r}")
     return "\n".join(lines)
