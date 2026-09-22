@@ -1,22 +1,25 @@
 {
- "updated": "2026-09-08 01:20 UTC",
+ "updated": "2026-09-22 23:09 UTC",
  "market": {
   "risk": "MIXED",
-  "note": "BTC in a normal regime. Be selective. No coin is doing anything independent of BTC right now. Intraday viable: BTC (4h), ETH (4h), SOL (4h), BNB (4h), XRP (4h), DOGE (1h).",
+  "note": "BTC in a normal regime. Be selective. Coin-specific action right now in XRP, DOGE (residual vol in its own top 30%) — those are the only names not just tracking BTC. Intraday viable: BTC (4h), ETH (4h), SOL (1h), BNB (4h), XRP (30m), DOGE (30m).",
   "n": 6,
   "intraday": [
    "BTC (4h)",
    "ETH (4h)",
-   "SOL (4h)",
+   "SOL (1h)",
    "BNB (4h)",
-   "XRP (4h)",
-   "DOGE (1h)"
+   "XRP (30m)",
+   "DOGE (30m)"
   ],
   "factor": "BTC",
-  "factor_regime": "CALM",
-  "factor_move": 1.670837213558574,
+  "factor_regime": "NORMAL",
+  "factor_move": 1.8862309231835659,
   "factor_horizon": "24h",
-  "coin_specific": [],
+  "coin_specific": [
+   "XRP",
+   "DOGE"
+  ],
   "tradeable": [
    "BTC",
    "ETH",
@@ -25,71 +28,71 @@
    "XRP",
    "DOGE"
   ],
-  "avg_move": 1.544290265105867
+  "avg_move": 1.2891858957075772
  },
- "track": "building history -- scorecard needs ~2 days of runs",
+ "track": "no track record yet",
  "coins": [
   {
    "coin": "BTC",
-   "price": 79330.0,
-   "chg": -0.756,
-   "plain": "BTC is down 0.8% today. It's quiet right now — small moves, not much happening. Over the next 24h expect roughly a ±1.67% swing. That's about 9.8x the cost of getting in and out. Right now buyers are pushing harder.\n👉 Normal conditions. Nothing urgent for a long-term holder.",
+   "price": 86431.0,
+   "chg": -0.182,
+   "plain": "BTC is down 0.2% today. It's a normal day for movement. Over the next 24h expect roughly a ±1.89% swing. That's about 11.1x the cost of getting in and out. Right now sellers are pushing harder.\n👉 Normal conditions. Nothing urgent for a long-term holder.",
    "vol": {
-    "move": 1.670837,
-    "lo": 77995.130508,
-    "hi": 80645.510747,
+    "move": 1.886231,
+    "lo": 84815.98122,
+    "hi": 88076.750689,
     "horizon": "24h",
     "intraday": "4h",
-    "regime": "CALM",
-    "pctile": 25.364837,
+    "regime": "NORMAL",
+    "pctile": 60.806115,
     "anchored": true,
-    "expansion": "STEADY",
-    "conf": "HIGH",
-    "r2": 0.314128,
+    "expansion": "CONTRACTING",
+    "conf": "MED",
+    "r2": 0.263492,
     "r2_kind": "walk-forward OOS",
-    "season_now": 1.465559,
-    "season_peak_h": 15,
+    "season_now": 0.583446,
+    "season_peak_h": 13,
     "season_trough_h": 4,
-    "season_ratio": 2.151099,
+    "season_ratio": 2.212571,
     "costs": [
      {
       "label": "30m",
-      "move": 0.180153,
-      "ratio": 1.059722,
+      "move": 0.232599,
+      "ratio": 1.368227,
       "state": "DEAD"
      },
      {
       "label": "1h",
-      "move": 0.265258,
-      "ratio": 1.560338,
+      "move": 0.340959,
+      "ratio": 2.005643,
       "state": "DEAD"
      },
      {
       "label": "4h",
-      "move": 0.555447,
-      "ratio": 3.267337,
+      "move": 0.698962,
+      "ratio": 4.111544,
       "state": "THIN"
      },
      {
       "label": "24h",
-      "move": 1.670837,
-      "ratio": 9.828454,
+      "move": 1.886231,
+      "ratio": 11.095476,
       "state": "OK"
      }
     ]
    },
    "flow": {
     "1h": {
-     "pct": -2.753212,
-     "pctile": 40.266204
+     "pct": -7.55169,
+     "pctile": 33.993056
     },
     "4h": {
-     "pct": -5.691148,
-     "pctile": 22.476852
+     "pct": -22.162842,
+     "pctile": 3.194444
     },
     "24h": {
-     "pct": -1.994663,
-     "pctile": 25.381944
+     "pct": -11.265714,
+     "pctile": 5.0
     }
    },
    "flow_meta": {
@@ -97,226 +100,110 @@
     "days": 69.4
    },
    "tape": {
-    "pct": 53.963656,
-    "window_s": 41.565,
+    "pct": -6.377053,
+    "window_s": 81.252963,
     "venues": 3,
-    "divergent": false
+    "divergent": true
    },
    "vpin": {
-    "v": 0.128969,
-    "pctile": 22.764977
+    "v": 0.173045,
+    "pctile": 83.974359
    },
    "factor": null,
    "deriv": {
-    "funding": 7.3e-05,
+    "funding": -1e-06,
     "fund_flag": "neutral",
-    "oi": 1.001126,
-    "top_ls": 2.0205,
-    "taker_ls": 1.1528
+    "oi": -1.714044,
+    "top_ls": 2.092,
+    "taker_ls": 0.96
    },
    "liq": null,
    "vp": {
-    "poc": 79704.52,
-    "val": 78014.44,
-    "vah": 81394.6,
-    "hvn_above": 79342.36,
-    "hvn_below": 79221.64,
+    "poc": 81106.94,
+    "val": 79627.23,
+    "vah": 87272.36,
+    "hvn_above": 86532.51,
+    "hvn_below": 86285.89,
     "window_h": 168,
     "note": "high-volume nodes = where price spent time, not where it must turn"
    },
    "playbook": {
-    "headline": "🟡 Tradeable — best horizon 24h ±1.67% (9.8x the round trip).",
+    "headline": "🟡 Tradeable — best horizon 24h ±1.89% (11.1x the round trip).",
     "context": [
-     "top traders net long (2.02)",
+     "top traders net long (2.09)",
      "funding neutral",
-     "1h aggressor lean at 40th pctile of its 30d range"
+     "1h aggressor lean at 34th pctile of its 30d range"
     ],
     "timing": [
-     "this hour runs 1.47x the coin's average variance (busier than normal)",
-     "busiest 15:00 UTC, deadest 04:00 UTC (2.15x spread)"
+     "this hour runs 0.58x the coin's average variance (quieter than normal)",
+     "busiest 13:00 UTC, deadest 04:00 UTC (2.21x spread)"
     ],
     "risks": [],
     "cost_state": "OK"
    },
-   "verdict": "🟡 Tradeable — 24h ±1.67% (9.8x the round trip)."
+   "verdict": "🟡 Tradeable — 24h ±1.89% (11.1x the round trip)."
   },
   {
    "coin": "ETH",
-   "price": 2499.46,
-   "chg": -0.284,
-   "plain": "ETH is down 0.3% today. It's a normal day for movement. Over the next 24h expect roughly a ±2.38% swing. That's about 14.0x the cost of getting in and out. Right now buyers are pushing harder. Note: about 71% of ETH's moves are just BTC repeating.\n👉 Normal conditions. Nothing urgent for a long-term holder.",
+   "price": 2764.26,
+   "chg": -0.74,
+   "plain": "ETH is down 0.7% today. It's a normal day for movement. Over the next 4h expect roughly a ±0.92% swing. That's about 5.4x the cost of getting in and out. Right now sellers are pushing harder. Note: about 74% of ETH's moves are just BTC repeating.\n👉 Normal conditions. Nothing urgent for a long-term holder.",
    "vol": {
-    "move": 2.376742,
-    "lo": 2439.963707,
-    "hi": 2558.747822,
-    "horizon": "24h",
-    "intraday": "4h",
-    "regime": "NORMAL",
-    "pctile": 41.765115,
-    "anchored": true,
-    "expansion": "STEADY",
-    "conf": "MED",
-    "r2": 0.274869,
-    "r2_kind": "walk-forward OOS",
-    "season_now": 1.220779,
-    "season_peak_h": 15,
-    "season_trough_h": 4,
-    "season_ratio": 2.033101,
-    "costs": [
-     {
-      "label": "30m",
-      "move": 0.246178,
-      "ratio": 1.448105,
-      "state": "DEAD"
-     },
-     {
-      "label": "1h",
-      "move": 0.364353,
-      "ratio": 2.143255,
-      "state": "DEAD"
-     },
-     {
-      "label": "4h",
-      "move": 0.765212,
-      "ratio": 4.50125,
-      "state": "THIN"
-     },
-     {
-      "label": "24h",
-      "move": 2.376742,
-      "ratio": 13.980836,
-      "state": "OK"
-     }
-    ]
-   },
-   "flow": {
-    "1h": {
-     "pct": 9.31564,
-     "pctile": 74.027778
-    },
-    "4h": {
-     "pct": -10.623118,
-     "pctile": 16.689815
-    },
-    "24h": {
-     "pct": -4.934639,
-     "pctile": 23.726852
-    }
-   },
-   "flow_meta": {
-    "source": "5m klines",
-    "days": 69.4
-   },
-   "tape": {
-    "pct": 19.635808,
-    "window_s": 159.92383,
-    "venues": 3,
-    "divergent": true
-   },
-   "vpin": {
-    "v": 0.16238,
-    "pctile": 74.38918
-   },
-   "factor": {
-    "beta": 1.13654,
-    "r2": 0.707433,
-    "idio": 0.292568,
-    "specific": false
-   },
-   "deriv": {
-    "funding": 3.9e-05,
-    "fund_flag": "neutral",
-    "oi": 0.029555,
-    "top_ls": 1.6089,
-    "taker_ls": 1.4894
-   },
-   "liq": null,
-   "vp": {
-    "poc": 2499.1,
-    "val": 2434.41,
-    "vah": 2529.54,
-    "hvn_above": 2499.1,
-    "hvn_below": 2495.29,
-    "window_h": 168,
-    "note": "high-volume nodes = where price spent time, not where it must turn"
-   },
-   "playbook": {
-    "headline": "🟡 Tradeable — best horizon 24h ±2.38% (14.0x the round trip).",
-    "context": [
-     "top traders net long (1.61)",
-     "funding neutral",
-     "1h aggressor lean at 74th pctile of its 30d range"
-    ],
-    "timing": [
-     "this hour runs 1.22x the coin's average variance (busier than normal)",
-     "busiest 15:00 UTC, deadest 04:00 UTC (2.03x spread)"
-    ],
-    "risks": [],
-    "cost_state": "OK"
-   },
-   "verdict": "🟡 Tradeable — 24h ±2.38% (14.0x the round trip).\n🔁 71% of its moves are just BTC (beta 1.14); 29% is its own — trading it instead of BTC adds fees, not information."
-  },
-  {
-   "coin": "SOL",
-   "price": 104.11,
-   "chg": -1.261,
-   "plain": "SOL is down 1.3% today. It's a normal day for movement. Over the next 4h expect roughly a ±0.94% swing. That's about 5.5x the cost of getting in and out. Buyers and sellers are fairly balanced. Note: about 51% of SOL's moves are just BTC repeating.\n👉 Normal conditions. Nothing urgent for a long-term holder.",
-   "vol": {
-    "move": 0.936231,
-    "lo": 103.120025,
-    "hi": 105.069099,
+    "move": 0.924306,
+    "lo": 2739.164365,
+    "hi": 2790.271828,
     "horizon": "4h",
     "intraday": "4h",
     "regime": "NORMAL",
-    "pctile": 59.13829,
+    "pctile": 37.873523,
     "anchored": true,
-    "expansion": "STEADY",
-    "conf": "HIGH",
-    "r2": 0.425683,
+    "expansion": "CONTRACTING",
+    "conf": "MED",
+    "r2": 0.162347,
     "r2_kind": "walk-forward OOS",
-    "season_now": 1.214317,
-    "season_peak_h": 5,
-    "season_trough_h": 19,
-    "season_ratio": 1.73205,
+    "season_now": 0.640211,
+    "season_peak_h": 13,
+    "season_trough_h": 10,
+    "season_ratio": 2.122805,
     "costs": [
      {
       "label": "30m",
-      "move": 0.296187,
-      "ratio": 1.742278,
+      "move": 0.312216,
+      "ratio": 1.836567,
       "state": "DEAD"
      },
      {
       "label": "1h",
-      "move": 0.438123,
-      "ratio": 2.577192,
+      "move": 0.454647,
+      "ratio": 2.674393,
       "state": "DEAD"
      },
      {
       "label": "4h",
-      "move": 0.936231,
-      "ratio": 5.507242,
+      "move": 0.924306,
+      "ratio": 5.437095,
       "state": "OK"
      },
      {
       "label": "24h",
-      "move": 2.957591,
-      "ratio": 17.397597,
+      "move": 2.44584,
+      "ratio": 14.387293,
       "state": "OK"
      }
     ]
    },
    "flow": {
     "1h": {
-     "pct": 1.070879,
-     "pctile": 48.80787
+     "pct": 8.222142,
+     "pctile": 73.287037
     },
     "4h": {
-     "pct": -2.158602,
-     "pctile": 36.921296
+     "pct": 9.050682,
+     "pctile": 83.599537
     },
     "24h": {
-     "pct": -3.107671,
-     "pctile": 21.19213
+     "pct": -1.644542,
+     "pctile": 48.043981
     }
    },
    "flow_meta": {
@@ -324,115 +211,115 @@
     "days": 69.4
    },
    "tape": {
-    "pct": -1.51809,
-    "window_s": 210.207,
+    "pct": -39.788947,
+    "window_s": 81.015434,
     "venues": 3,
     "divergent": true
    },
    "vpin": {
-    "v": 0.168437,
-    "pctile": 86.445536
+    "v": 0.136014,
+    "pctile": 32.892999
    },
    "factor": {
-    "beta": 1.106644,
-    "r2": 0.514849,
-    "idio": 0.485152,
+    "beta": 1.138456,
+    "r2": 0.7416,
+    "idio": 0.258401,
     "specific": false
    },
    "deriv": {
-    "funding": 1.9e-05,
+    "funding": 9.5e-05,
     "fund_flag": "neutral",
-    "oi": -2.564464,
-    "top_ls": 2.4835,
-    "taker_ls": 1.2043
+    "oi": 0.073102,
+    "top_ls": 1.503,
+    "taker_ls": 0.8218
    },
    "liq": null,
    "vp": {
-    "poc": 103.87,
-    "val": 101.27,
-    "vah": 106.66,
-    "hvn_above": 104.27,
-    "hvn_below": 104.07,
+    "poc": 2741.61,
+    "val": 2504.96,
+    "vah": 2802.96,
+    "hvn_above": null,
+    "hvn_below": 2759.13,
     "window_h": 168,
     "note": "high-volume nodes = where price spent time, not where it must turn"
    },
    "playbook": {
-    "headline": "🟡 Tradeable — best horizon 4h ±0.94% (5.5x the round trip).",
+    "headline": "🟡 Tradeable — best horizon 4h ±0.92% (5.4x the round trip).",
     "context": [
-     "top traders net long (2.48)",
+     "top traders net long (1.50)",
      "funding neutral",
-     "1h aggressor lean at 49th pctile of its 30d range"
+     "1h aggressor lean at 73th pctile of its 30d range"
     ],
     "timing": [
-     "this hour runs 1.21x the coin's average variance (busier than normal)",
-     "busiest 05:00 UTC, deadest 19:00 UTC (1.73x spread)"
+     "this hour runs 0.64x the coin's average variance (quieter than normal)",
+     "busiest 13:00 UTC, deadest 10:00 UTC (2.12x spread)"
     ],
     "risks": [],
     "cost_state": "OK"
    },
-   "verdict": "🟡 Tradeable — 4h ±0.94% (5.5x the round trip).\n🔁 51% of its moves are just BTC (beta 1.11); 49% is its own — trading it instead of BTC adds fees, not information."
+   "verdict": "🟡 Tradeable — 4h ±0.92% (5.4x the round trip).\n🔁 74% of its moves are just BTC (beta 1.14); 26% is its own — trading it instead of BTC adds fees, not information."
   },
   {
-   "coin": "BNB",
-   "price": 740.99,
-   "chg": -0.794,
-   "plain": "BNB is down 0.8% today. It's a normal day for movement. Over the next 24h expect roughly a ±2.06% swing. That's about 12.1x the cost of getting in and out. Right now buyers are pushing harder. Note: about 50% of BNB's moves are just BTC repeating.\n👉 Normal conditions. Nothing urgent for a long-term holder.",
+   "coin": "SOL",
+   "price": 119.11,
+   "chg": -0.426,
+   "plain": "SOL is down 0.4% today. It's a normal day for movement. Over the next 4h expect roughly a ±1.19% swing. That's about 7.0x the cost of getting in and out. Right now sellers are pushing harder. Note: about 63% of SOL's moves are just BTC repeating.\n👉 Normal conditions. Nothing urgent for a long-term holder.",
    "vol": {
-    "move": 2.060536,
-    "lo": 725.779907,
-    "hi": 756.314672,
-    "horizon": "24h",
-    "intraday": "4h",
+    "move": 1.193104,
+    "lo": 117.717101,
+    "hi": 120.559857,
+    "horizon": "4h",
+    "intraday": "1h",
     "regime": "NORMAL",
-    "pctile": 68.033356,
+    "pctile": 45.934677,
     "anchored": true,
     "expansion": "CONTRACTING",
-    "conf": "HIGH",
-    "r2": 0.471611,
+    "conf": "MED",
+    "r2": 0.134528,
     "r2_kind": "walk-forward OOS",
-    "season_now": 1.324376,
+    "season_now": 0.69406,
     "season_peak_h": 14,
-    "season_trough_h": 20,
-    "season_ratio": 1.906507,
+    "season_trough_h": 7,
+    "season_ratio": 1.68219,
     "costs": [
      {
       "label": "30m",
-      "move": 0.192877,
-      "ratio": 1.134568,
+      "move": 0.400843,
+      "ratio": 2.357902,
       "state": "DEAD"
      },
      {
       "label": "1h",
-      "move": 0.284943,
-      "ratio": 1.676135,
-      "state": "DEAD"
-     },
-     {
-      "label": "4h",
-      "move": 0.606699,
-      "ratio": 3.56882,
+      "move": 0.583004,
+      "ratio": 3.429436,
       "state": "THIN"
      },
      {
+      "label": "4h",
+      "move": 1.193104,
+      "ratio": 7.018257,
+      "state": "OK"
+     },
+     {
       "label": "24h",
-      "move": 2.060536,
-      "ratio": 12.120798,
+      "move": 3.003954,
+      "ratio": 17.670319,
       "state": "OK"
      }
     ]
    },
    "flow": {
     "1h": {
-     "pct": 15.581075,
-     "pctile": 80.9375
+     "pct": 11.976837,
+     "pctile": 78.391204
     },
     "4h": {
-     "pct": 8.332084,
-     "pctile": 74.675926
+     "pct": -6.949863,
+     "pctile": 19.826389
     },
     "24h": {
-     "pct": -5.654182,
-     "pctile": 18.240741
+     "pct": -0.508447,
+     "pctile": 43.18287
     }
    },
    "flow_meta": {
@@ -440,231 +327,347 @@
     "days": 69.4
    },
    "tape": {
-    "pct": 30.783986,
-    "window_s": 522.187786,
+    "pct": -29.634656,
+    "window_s": 75.061,
+    "venues": 3,
+    "divergent": true
+   },
+   "vpin": {
+    "v": 0.175761,
+    "pctile": 95.429539
+   },
+   "factor": {
+    "beta": 1.309425,
+    "r2": 0.628938,
+    "idio": 0.371064,
+    "specific": false
+   },
+   "deriv": {
+    "funding": 6.7e-05,
+    "fund_flag": "neutral",
+    "oi": -0.244145,
+    "top_ls": 2.4128,
+    "taker_ls": 1.0597
+   },
+   "liq": null,
+   "vp": {
+    "poc": 116.88,
+    "val": 106.37,
+    "vah": 119.75,
+    "hvn_above": null,
+    "hvn_below": 118.32,
+    "window_h": 168,
+    "note": "high-volume nodes = where price spent time, not where it must turn"
+   },
+   "playbook": {
+    "headline": "🟡 Tradeable — best horizon 4h ±1.19% (7.0x the round trip).",
+    "context": [
+     "top traders net long (2.41)",
+     "funding neutral",
+     "1h aggressor lean at 78th pctile of its 30d range"
+    ],
+    "timing": [
+     "this hour runs 0.69x the coin's average variance (quieter than normal)",
+     "busiest 14:00 UTC, deadest 07:00 UTC (1.68x spread)"
+    ],
+    "risks": [],
+    "cost_state": "OK"
+   },
+   "verdict": "🟡 Tradeable — 4h ±1.19% (7.0x the round trip).\n🔁 63% of its moves are just BTC (beta 1.31); 37% is its own — trading it instead of BTC adds fees, not information."
+  },
+  {
+   "coin": "BNB",
+   "price": 789.2,
+   "chg": -1.705,
+   "plain": "BNB is down 1.7% today. It's a normal day for movement. Over the next 24h expect roughly a ±1.93% swing. That's about 11.4x the cost of getting in and out. Right now buyers are pushing harder. Note: about 57% of BNB's moves are just BTC repeating.\n👉 Normal conditions. Nothing urgent for a long-term holder.",
+   "vol": {
+    "move": 1.931048,
+    "lo": 774.096564,
+    "hi": 804.57773,
+    "horizon": "24h",
+    "intraday": "4h",
+    "regime": "NORMAL",
+    "pctile": 45.865184,
+    "anchored": true,
+    "expansion": "CONTRACTING",
+    "conf": "HIGH",
+    "r2": 0.467594,
+    "r2_kind": "walk-forward OOS",
+    "season_now": 0.615184,
+    "season_peak_h": 14,
+    "season_trough_h": 20,
+    "season_ratio": 1.743737,
+    "costs": [
+     {
+      "label": "30m",
+      "move": 0.233062,
+      "ratio": 1.370953,
+      "state": "DEAD"
+     },
+     {
+      "label": "1h",
+      "move": 0.344113,
+      "ratio": 2.024191,
+      "state": "DEAD"
+     },
+     {
+      "label": "4h",
+      "move": 0.742243,
+      "ratio": 4.366137,
+      "state": "THIN"
+     },
+     {
+      "label": "24h",
+      "move": 1.931048,
+      "ratio": 11.359104,
+      "state": "OK"
+     }
+    ]
+   },
+   "flow": {
+    "1h": {
+     "pct": 21.018768,
+     "pctile": 90.949074
+    },
+    "4h": {
+     "pct": -2.428126,
+     "pctile": 41.018519
+    },
+    "24h": {
+     "pct": -4.657346,
+     "pctile": 24.618056
+    }
+   },
+   "flow_meta": {
+    "source": "5m klines",
+    "days": 69.4
+   },
+   "tape": {
+    "pct": 38.549439,
+    "window_s": 401.771,
+    "venues": 3,
+    "divergent": true
+   },
+   "vpin": {
+    "v": 0.203396,
+    "pctile": 92.47923
+   },
+   "factor": {
+    "beta": 0.814732,
+    "r2": 0.569897,
+    "idio": 0.430104,
+    "specific": false
+   },
+   "deriv": {
+    "funding": 8e-06,
+    "fund_flag": "neutral",
+    "oi": -5.640327,
+    "top_ls": 1.703,
+    "taker_ls": 0.8298
+   },
+   "liq": null,
+   "vp": {
+    "poc": 785.82,
+    "val": 750.73,
+    "vah": 802.33,
+    "hvn_above": 789.95,
+    "hvn_below": 787.88,
+    "window_h": 168,
+    "note": "high-volume nodes = where price spent time, not where it must turn"
+   },
+   "playbook": {
+    "headline": "🟡 Tradeable — best horizon 24h ±1.93% (11.4x the round trip).",
+    "context": [
+     "top traders net long (1.70)",
+     "funding neutral",
+     "1h aggressor lean at 91th pctile of its 30d range"
+    ],
+    "timing": [
+     "this hour runs 0.62x the coin's average variance (quieter than normal)",
+     "busiest 14:00 UTC, deadest 20:00 UTC (1.74x spread)"
+    ],
+    "risks": [],
+    "cost_state": "OK"
+   },
+   "verdict": "🟡 Tradeable — 24h ±1.93% (11.4x the round trip).\n🔁 57% of its moves are just BTC (beta 0.81); 43% is its own — trading it instead of BTC adds fees, not information."
+  },
+  {
+   "coin": "XRP",
+   "price": 1.5802,
+   "chg": 1.275,
+   "plain": "XRP is up 1.3% today. It's a wild/high-risk day — big swings likely. Over the next 1h expect roughly a ±0.87% swing. That's about 5.1x the cost of getting in and out. Right now sellers are pushing harder. Unusually, XRP is moving on its own news today, not just following BTC.\n👉 If you just hold, expect a bumpy ride; don't panic on a spike, and avoid big new bets into the chaos.",
+   "vol": {
+    "move": 0.870693,
+    "lo": 1.566501,
+    "hi": 1.594019,
+    "horizon": "1h",
+    "intraday": "30m",
+    "regime": "STORM",
+    "pctile": 82.904795,
+    "anchored": true,
+    "expansion": "STEADY",
+    "conf": "HIGH",
+    "r2": 0.347807,
+    "r2_kind": "walk-forward OOS",
+    "season_now": 0.549247,
+    "season_peak_h": 5,
+    "season_trough_h": 7,
+    "season_ratio": 2.40814,
+    "costs": [
+     {
+      "label": "30m",
+      "move": 0.593734,
+      "ratio": 3.492553,
+      "state": "THIN"
+     },
+     {
+      "label": "1h",
+      "move": 0.870693,
+      "ratio": 5.121725,
+      "state": "OK"
+     },
+     {
+      "label": "4h",
+      "move": 1.80155,
+      "ratio": 10.597356,
+      "state": "OK"
+     },
+     {
+      "label": "24h",
+      "move": 3.809642,
+      "ratio": 22.40966,
+      "state": "OK"
+     }
+    ]
+   },
+   "flow": {
+    "1h": {
+     "pct": -13.196425,
+     "pctile": 9.710648
+    },
+    "4h": {
+     "pct": -6.634849,
+     "pctile": 15.520833
+    },
+    "24h": {
+     "pct": -0.310184,
+     "pctile": 52.916667
+    }
+   },
+   "flow_meta": {
+    "source": "5m klines",
+    "days": 69.4
+   },
+   "tape": {
+    "pct": -13.838399,
+    "window_s": 211.602,
     "venues": 3,
     "divergent": false
    },
    "vpin": {
-    "v": 0.175945,
-    "pctile": 61.263251
+    "v": 0.140567,
+    "pctile": 84.788732
    },
    "factor": {
-    "beta": 0.736347,
-    "r2": 0.502272,
-    "idio": 0.497729,
-    "specific": false
+    "beta": 1.509334,
+    "r2": 0.618735,
+    "idio": 0.381266,
+    "specific": true
    },
    "deriv": {
-    "funding": 2.9e-05,
+    "funding": 0.0001,
     "fund_flag": "neutral",
-    "oi": -2.908527,
-    "top_ls": 1.7751,
-    "taker_ls": 0.9746
+    "oi": -1.054595,
+    "top_ls": 2.0922,
+    "taker_ls": 0.83
    },
    "liq": null,
    "vp": {
-    "poc": 722.32,
-    "val": 709.59,
-    "vah": 766.85,
-    "hvn_above": 743.53,
-    "hvn_below": 724.44,
+    "poc": 1.3012,
+    "val": 1.2504,
+    "vah": 1.4897,
+    "hvn_above": null,
+    "hvn_below": 1.5187,
     "window_h": 168,
     "note": "high-volume nodes = where price spent time, not where it must turn"
    },
    "playbook": {
-    "headline": "🟡 Tradeable — best horizon 24h ±2.06% (12.1x the round trip).",
+    "headline": "⚡ High-risk — 1h ±0.87% (5.1x costs). Size DOWN, widen stops, or stay out.",
     "context": [
-     "top traders net long (1.78)",
+     "top traders net long (2.09)",
      "funding neutral",
-     "1h aggressor lean at 81th pctile of its 30d range"
+     "1h aggressor lean at 10th pctile of its 30d range"
     ],
     "timing": [
-     "this hour runs 1.32x the coin's average variance (busier than normal)",
-     "busiest 14:00 UTC, deadest 20:00 UTC (1.91x spread)"
+     "this hour runs 0.55x the coin's average variance (quieter than normal)",
+     "busiest 05:00 UTC, deadest 07:00 UTC (2.41x spread)"
     ],
     "risks": [],
     "cost_state": "OK"
    },
-   "verdict": "🟡 Tradeable — 24h ±2.06% (12.1x the round trip).\n🔁 50% of its moves are just BTC (beta 0.74); 50% is its own — trading it instead of BTC adds fees, not information."
-  },
-  {
-   "coin": "XRP",
-   "price": 1.4019,
-   "chg": -0.362,
-   "plain": "XRP is down 0.4% today. It's a normal day for movement. Over the next 4h expect roughly a ±0.98% swing. That's about 5.7x the cost of getting in and out. Right now buyers are pushing harder. Note: about 46% of XRP's moves are just BTC repeating.\n👉 Normal conditions. Nothing urgent for a long-term holder.",
-   "vol": {
-    "move": 0.9758,
-    "lo": 1.387891,
-    "hi": 1.415243,
-    "horizon": "4h",
-    "intraday": "4h",
-    "regime": "NORMAL",
-    "pctile": 67.685893,
-    "anchored": true,
-    "expansion": "STEADY",
-    "conf": "HIGH",
-    "r2": 0.564985,
-    "r2_kind": "walk-forward OOS",
-    "season_now": 0.898993,
-    "season_peak_h": 5,
-    "season_trough_h": 7,
-    "season_ratio": 2.471606,
-    "costs": [
-     {
-      "label": "30m",
-      "move": 0.304866,
-      "ratio": 1.793329,
-      "state": "DEAD"
-     },
-     {
-      "label": "1h",
-      "move": 0.451823,
-      "ratio": 2.657785,
-      "state": "DEAD"
-     },
-     {
-      "label": "4h",
-      "move": 0.9758,
-      "ratio": 5.739999,
-      "state": "OK"
-     },
-     {
-      "label": "24h",
-      "move": 2.954263,
-      "ratio": 17.378017,
-      "state": "OK"
-     }
-    ]
-   },
-   "flow": {
-    "1h": {
-     "pct": -9.576693,
-     "pctile": 29.398148
-    },
-    "4h": {
-     "pct": -10.130427,
-     "pctile": 21.597222
-    },
-    "24h": {
-     "pct": 1.872888,
-     "pctile": 81.423611
-    }
-   },
-   "flow_meta": {
-    "source": "5m klines",
-    "days": 69.4
-   },
-   "tape": {
-    "pct": 11.795945,
-    "window_s": 505.373586,
-    "venues": 3,
-    "divergent": true
-   },
-   "vpin": {
-    "v": 0.115683,
-    "pctile": 28.611599
-   },
-   "factor": {
-    "beta": 1.502567,
-    "r2": 0.455183,
-    "idio": 0.544817,
-    "specific": false
-   },
-   "deriv": {
-    "funding": 4.4e-05,
-    "fund_flag": "neutral",
-    "oi": 0.817263,
-    "top_ls": 2.2788,
-    "taker_ls": 1.0539
-   },
-   "liq": null,
-   "vp": {
-    "poc": 1.4019,
-    "val": 1.3393,
-    "vah": 1.4262,
-    "hvn_above": 1.4019,
-    "hvn_below": 1.3984,
-    "window_h": 168,
-    "note": "high-volume nodes = where price spent time, not where it must turn"
-   },
-   "playbook": {
-    "headline": "🟡 Tradeable — best horizon 4h ±0.98% (5.7x the round trip).",
-    "context": [
-     "top traders net long (2.28)",
-     "funding neutral",
-     "1h aggressor lean at 29th pctile of its 30d range"
-    ],
-    "timing": [
-     "this hour runs 0.90x the coin's average variance (quieter than normal)",
-     "busiest 05:00 UTC, deadest 07:00 UTC (2.47x spread)"
-    ],
-    "risks": [],
-    "cost_state": "OK"
-   },
-   "verdict": "🟡 Tradeable — 4h ±0.98% (5.7x the round trip).\n🔁 46% of its moves are just BTC (beta 1.50); 54% is its own — trading it instead of BTC adds fees, not information."
+   "verdict": "⚡ High-risk regime — 1h ±0.87% (5.1x costs). Size DOWN, wider stops, or stay out."
   },
   {
    "coin": "DOGE",
-   "price": 0.09117,
-   "chg": 1.277,
-   "plain": "DOGE is up 1.3% today. It's a wild/high-risk day — big swings likely. Over the next 4h expect roughly a ±1.25% swing. That's about 7.3x the cost of getting in and out. Right now buyers are pushing harder. Note: about 44% of DOGE's moves are just BTC repeating.\n👉 If you just hold, expect a bumpy ride; don't panic on a spike, and avoid big new bets into the chaos.",
+   "price": 0.1012,
+   "chg": -0.128,
+   "plain": "DOGE is down 0.1% today. It's a wild/high-risk day — big swings likely. Over the next 1h expect roughly a ±0.93% swing. That's about 5.5x the cost of getting in and out. Right now buyers are pushing harder. Unusually, DOGE is moving on its own news today, not just following BTC.\n👉 If you just hold, expect a bumpy ride; don't panic on a spike, and avoid big new bets into the chaos.",
    "vol": {
-    "move": 1.245596,
-    "lo": 0.090041,
-    "hi": 0.092313,
-    "horizon": "4h",
-    "intraday": "1h",
+    "move": 0.929734,
+    "lo": 0.100224,
+    "hi": 0.102105,
+    "horizon": "1h",
+    "intraday": "30m",
     "regime": "STORM",
-    "pctile": 81.097985,
+    "pctile": 88.047255,
     "anchored": true,
     "expansion": "STEADY",
-    "conf": "HIGH",
-    "r2": 0.424945,
+    "conf": "MED",
+    "r2": 0.271782,
     "r2_kind": "walk-forward OOS",
-    "season_now": 0.914167,
+    "season_now": 0.620507,
     "season_peak_h": 5,
-    "season_trough_h": 19,
-    "season_ratio": 2.327162,
+    "season_trough_h": 11,
+    "season_ratio": 2.141595,
     "costs": [
      {
       "label": "30m",
-      "move": 0.399475,
-      "ratio": 2.349851,
-      "state": "DEAD"
-     },
-     {
-      "label": "1h",
-      "move": 0.590413,
-      "ratio": 3.473019,
+      "move": 0.632005,
+      "ratio": 3.717679,
       "state": "THIN"
      },
      {
+      "label": "1h",
+      "move": 0.929734,
+      "ratio": 5.469021,
+      "state": "OK"
+     },
+     {
       "label": "4h",
-      "move": 1.245596,
-      "ratio": 7.327034,
+      "move": 1.905813,
+      "ratio": 11.210667,
       "state": "OK"
      },
      {
       "label": "24h",
-      "move": 3.907604,
-      "ratio": 22.985905,
+      "move": 4.281234,
+      "ratio": 25.183728,
       "state": "OK"
      }
     ]
    },
    "flow": {
     "1h": {
-     "pct": 10.18289,
-     "pctile": 75.578704
+     "pct": 16.555212,
+     "pctile": 90.486111
     },
     "4h": {
-     "pct": 8.22217,
-     "pctile": 82.719907
+     "pct": 7.869991,
+     "pctile": 86.041667
     },
     "24h": {
-     "pct": 1.904055,
-     "pctile": 71.956019
+     "pct": 2.316411,
+     "pctile": 78.310185
     }
    },
    "flow_meta": {
@@ -672,53 +675,53 @@
     "days": 69.4
    },
    "tape": {
-    "pct": 6.728089,
-    "window_s": 343.801184,
+    "pct": 38.397881,
+    "window_s": 137.075,
     "venues": 3,
     "divergent": true
    },
    "vpin": {
-    "v": 0.147376,
-    "pctile": 46.76259
+    "v": 0.147065,
+    "pctile": 74.232887
    },
    "factor": {
-    "beta": 1.317003,
-    "r2": 0.436986,
-    "idio": 0.563015,
-    "specific": false
+    "beta": 1.412112,
+    "r2": 0.513458,
+    "idio": 0.486543,
+    "specific": true
    },
    "deriv": {
-    "funding": 9.9e-05,
+    "funding": 0.0001,
     "fund_flag": "neutral",
-    "oi": 2.439356,
-    "top_ls": 3.4167,
-    "taker_ls": 1.5538
+    "oi": 0.722896,
+    "top_ls": 3.8648,
+    "taker_ls": 0.8498
    },
    "liq": null,
    "vp": {
-    "poc": 0.089893,
-    "val": 0.084486,
-    "vah": 0.091996,
+    "poc": 0.099547,
+    "val": 0.08686,
+    "vah": 0.102305,
     "hvn_above": null,
-    "hvn_below": 0.091095,
+    "hvn_below": 0.10065,
     "window_h": 168,
     "note": "high-volume nodes = where price spent time, not where it must turn"
    },
    "playbook": {
-    "headline": "⚡ High-risk — 4h ±1.25% (7.3x costs). Size DOWN, widen stops, or stay out.",
+    "headline": "⚡ High-risk — 1h ±0.93% (5.5x costs). Size DOWN, widen stops, or stay out.",
     "context": [
-     "top traders net long (3.42)",
+     "top traders net long (3.86)",
      "funding neutral",
-     "1h aggressor lean at 76th pctile of its 30d range"
+     "1h aggressor lean at 90th pctile of its 30d range"
     ],
     "timing": [
-     "this hour runs 0.91x the coin's average variance (quieter than normal)",
-     "busiest 05:00 UTC, deadest 19:00 UTC (2.33x spread)"
+     "this hour runs 0.62x the coin's average variance (quieter than normal)",
+     "busiest 05:00 UTC, deadest 11:00 UTC (2.14x spread)"
     ],
     "risks": [],
     "cost_state": "OK"
    },
-   "verdict": "⚡ High-risk regime — 4h ±1.25% (7.3x costs). Size DOWN, wider stops, or stay out.\n🔁 44% of its moves are just BTC (beta 1.32); 56% is its own — trading it instead of BTC adds fees, not information."
+   "verdict": "⚡ High-risk regime — 1h ±0.93% (5.5x costs). Size DOWN, wider stops, or stay out."
   }
  ]
 }
